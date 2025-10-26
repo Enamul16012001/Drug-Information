@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drug Search - FDA Database</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2c3e50;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #7f8c8d;
+        }
+
+        .hero-search {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .hero-search h2 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+
+        .hero-search p {
+            text-align: center;
+            color: #95a5a6;
+            margin-bottom: 30px;
+        }
+
+        .main-search-box {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .search-input-wrapper {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 50px;
+            padding: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input-wrapper:focus-within {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-icon {
+            font-size: 1.3em;
+            padding: 0 15px;
+            color: #667eea;
+        }
+
+        #mainSearch {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 15px 10px;
+            font-size: 1em;
+            color: #2c3e50;
+            outline: none;
+        }
+
+        #mainSearch::placeholder {
+            color: #bdc3c7;
+        }
+
+        .search-btn {
+            padding: 14px 35px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .search-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .search-examples {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .search-examples strong {
+            color: #7f8c8d;
+            font-size: 0.95em;
+        }
+
+        .search-examples span {
+            display: inline-block;
+            padding: 6px 16px;
+            background: #e8eaf6;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #667eea;
+            font-weight: 500;
+            font-size: 0.9em;
+        }
+
+        .search-examples span:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .limit-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .limit-selector label {
+            font-size: 0.95em;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .limit-selector select {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 0.9em;
+            background: #ffffff;
+            color: #2c3e50;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .limit-selector select:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+
+        .toggle-section {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .toggle-btn {
+            background: #ffffff;
+            color: #667eea;
+            border: 2px solid #e9ecef;
+            padding: 12px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn:hover {
+            border-color: #667eea;
+            background: #f8f9fa;
+            transform: translateY(-2px);
+        }
+
+        .advanced-section {
+            display: none;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .section-header h3 {
+            color: #2c3e50;
+            font-size: 1.6em;
+        }
+
+        .search-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .search-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-box label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 1.05em;
+        }
+
+        .search-box small {
+            display: block;
+            color: #95a5a6;
+            margin-bottom: 12px;
+            font-size: 0.85em;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="text"], select {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 0.95em;
+            background: #ffffff;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus, select:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button:not(.search-btn):not(.toggle-btn) {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        button:not(.search-btn):not(.toggle-btn):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .results {
+            margin-top: 40px;
+        }
+
+        .results-header {
+            background: #ffffff;
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .results-header h2 {
+            color: #2c3e50;
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .results-count {
+            color: #95a5a6;
+            font-size: 0.95em;
+        }
+
+        .result-item {
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            background: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .result-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .drug-name {
+            font-size: 1.8em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            color: #2c3e50;
+            font-size: 0.95em;
+            word-wrap: break-word;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin: 2px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px;
+            color: #95a5a6;
+            font-size: 1.2em;
+            background: #ffffff;
+            border: 2px dashed #e9ecef;
+            border-radius: 15px;
+        }
+
+        .no-results::before {
+            content: "🔍";
+            font-size: 4em;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #667eea;
+            font-size: 1.2em;
+            font-weight: 600;
+            background: #ffffff;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+        }
+
+        .loading::after {
+            content: "...";
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: "."; }
+            40% { content: ".."; }
+            60%, 100% { content: "..."; }
+        }
+
+        .pharm-class-select {
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .search-options {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .search-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏥 FDA Drug Database Explorer</h1>
+            <p class="subtitle">Comprehensive search across official U.S. drug information</p>
+        </header>
+
+        <div class="hero-search">
+            <h2>Universal Search</h2>
+            <p>Search across brand names, generic names, manufacturers, ingredients, and more</p>
+            
+            <div class="main-search-box">
+                <div class="search-input-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="mainSearch" placeholder="Enter any drug name, manufacturer, or ingredient..." autocomplete="off">
+                    <button class="search-btn" onclick="universalSearch()">Search</button>
+                </div>
+                
+                <div class="search-options">
+                    <div class="search-examples">
+                        <strong>Try:</strong>
+                        <span onclick="quickSearch('Aspirin')">Aspirin</span>
+                        <span onclick="quickSearch('Pfizer')">Pfizer</span>
+                        <span onclick="quickSearch('Ibuprofen')">Ibuprofen</span>
+                        <span onclick="quickSearch('Tylenol')">Tylenol</span>
+                    </div>
+                    <div class="limit-selector">
+                        <label for="resultLimit">Results:</label>
+                        <select id="resultLimit">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="20" selected>20</option>
+                            <option value="30">30</option>
+                            <option value="50">50</option>
+                            <option value="99">99 (Max)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="toggle-section">
+            <button class="toggle-btn" onclick="toggleAdvanced()">
+                <span id="toggleText">⚙️ Show Advanced Search Options</span>
+            </button>
+        </div>
+
+        <div id="advancedSection" class="advanced-section">
+            <div class="section-header">
+                <h3>🎯 Targeted Search</h3>
+                <div class="limit-selector">
+                    <label for="advancedLimit">Results:</label>
+                    <select id="advancedLimit">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                        <option value="50">50</option>
+                        <option value="99">99 (Max)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="search-grid">
+                <!-- Basic Search Fields -->
+                <div class="search-box">
+                    <label>Brand Name</label>
+                    <small>Official brand or trade name</small>
+                    <div class="input-group">
+                        <input type="text" id="brandName" placeholder="e.g., Aspirin, Tylenol">
+                        <button onclick="searchByBrand()">Search</button>
+                    </div>
+                </div>
+
+                <div class="search-box">
+                    <label>Generic Name</label>
+                    <small>Chemical or generic name</small>
+                    <div class="input-group">
+                        <input type="text" id="genericName" placeholder="e.g., Ibuprofen">
+                        <button onclick="searchByGeneric()">Search</button>
+                    </div>
+                </div>
+
+                <div class="search-box">
+                    <label>Application Number</label>
+                    <small>NDA, ANDA, or BLA number</small>
+                    <div class="input-group">
+                        <input type="text" id="appNumber" placeholder="e.g., NDA021223">
+                        <button onclick="searchByApplication()">Search</button>
+                    </div>
+                </div>
+
+                <div class="search-box">
+                    <label>Manufacturer</label>
+                    <small>Company or manufacturer name</small>
+                    <div class="input-group">
+                        <input type="text" id="manufacturer" placeholder="e.g., Pfizer">
+                        <button onclick="searchByManufacturer()">Search</button>
+                    </div>
+                </div>
+
+                <div class="search-box">
+                    <label>Active Ingredient</label>
+                    <small>Medicinal substance name</small>
+                    <div class="input-group">
+                        <input type="text" id="ingredient" placeholder="e.g., Acetaminophen">
+                        <button onclick="searchByIngredient()">Search</button>
+                    </div>
+                </div>
+
+                <!-- New Search Fields -->
+                <div class="search-box">
+                    <label>Route of Administration</label>
+                    <small>How the drug is administered</small>
+                    <div class="input-group">
+                        <input type="text" id="route" placeholder="e.g., ORAL, INTRAVENOUS">
+                        <button onclick="searchByRoute()">Search</button>
+                    </div>
+                </div>
+
+                <div class="search-box">
+                    <label>Dosage Form</label>
+                    <small>Physical form of the drug</small>
+                    <div class="input-group">
+                        <input type="text" id="dosageForm" placeholder="e.g., TABLET, CAPSULE">
+                        <button onclick="searchByDosageForm()">Search</button>
+                    </div>
+                </div>
+
+                <div class="search-box">
+                    <label>NDC (National Drug Code)</label>
+                    <small>Unique product identifier</small>
+                    <div class="input-group">
+                        <input type="text" id="ndc" placeholder="e.g., 0071-0156">
+                        <button onclick="searchByNDC()">Search</button>
+                    </div>
+                </div>
+
+                <div class="search-box">
+                    <label>RxCUI (RxNorm ID)</label>
+                    <small>RxNorm Concept Unique Identifier</small>
+                    <div class="input-group">
+                        <input type="text" id="rxcui" placeholder="e.g., 161">
+                        <button onclick="searchByRxCUI()">Search</button>
+                    </div>
+                </div>
+
+                <div class="search-box">
+                    <label>UNII (Ingredient ID)</label>
+                    <small>Unique Ingredient Identifier</small>
+                    <div class="input-group">
+                        <input type="text" id="unii" placeholder="e.g., R16CO5Y76E">
+                        <button onclick="searchByUNII()">Search</button>
+                    </div>
+                </div>
+
+                <div class="search-box">
+                    <label>Pharmacologic Class</label>
+                    <small>Drug classification</small>
+                    <select id="pharmClassType" class="pharm-class-select">
+                        <option value="epc">Established Pharmacologic Class (EPC)</option>
+                        <option value="pe">Physiologic Effect (PE)</option>
+                        <option value="moa">Mechanism of Action (MoA)</option>
+                        <option value="cs">Chemical Structure (CS)</option>
+                    </select>
+                    <div class="input-group">
+                        <input type="text" id="pharmClass" placeholder="e.g., Thiazide Diuretic">
+                        <button onclick="searchByPharmClass()">Search</button>
+                    </div>
+                </div>
+
+                <div class="search-box">
+                    <label>SPL ID</label>
+                    <small>Structured Product Label ID</small>
+                    <div class="input-group">
+                        <input type="text" id="splId" placeholder="e.g., 12345678-1234-1234">
+                        <button onclick="searchBySPLId()">Search</button>
+                    </div>
+                </div>
+
+                <div class="search-box">
+                    <label>Product Number</label>
+                    <small>Specific product identifier</small>
+                    <div class="input-group">
+                        <input type="text" id="productNumber" placeholder="e.g., 001">
+                        <button onclick="searchByProductNumber()">Search</button>
+                    </div>
+                </div>
+
+                <div class="search-box">
+                    <label>Marketing Status</label>
+                    <small>How the drug is marketed</small>
+                    <div class="input-group">
+                        <input type="text" id="marketingStatus" placeholder="e.g., Prescription">
+                        <button onclick="searchByMarketingStatus()">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="results" class="results"></div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        // Toggle advanced section
+        function toggleAdvanced() {
+            const section = document.getElementById('advancedSection');
+            const toggleText = document.getElementById('toggleText');
+            
+            if (section.style.display === 'none' || section.style.display === '') {
+                section.style.display = 'block';
+                toggleText.textContent = '⚙️ Hide Advanced Search Options';
+            } else {
+                section.style.display = 'none';
+                toggleText.textContent = '⚙️ Show Advanced Search Options';
+            }
+        }
+
+        // Quick search from examples
+        function quickSearch(term) {
+            document.getElementById('mainSearch').value = term;
+            universalSearch();
+        }
+
+        // Enter key support for main search
+        document.getElementById('mainSearch').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                universalSearch();
+            }
+        });
+
+        // Universal search
+        async function universalSearch() {
+            const query = document.getElementById('mainSearch').value.trim();
+            const limit = document.getElementById('resultLimit').value;
+            
+            if (!query) {
+                alert('Please enter a search term');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/search/all?query=${encodeURIComponent(query)}&limit=${limit}`);
+                const data = await response.json();
+                displayResults(data, `Universal Search: "${query}"`);
+            } catch (error) {
+                showError('Error performing search: ' + error.message);
+            }
+        }
+
+        // Brand name search
+        async function searchByBrand() {
+            const query = document.getElementById('brandName').value.trim();
+            const limit = document.getElementById('advancedLimit').value;
+            
+            if (!query) {
+                alert('Please enter a brand name');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/search?query=${encodeURIComponent(query)}&field=openfda.brand_name&limit=${limit}`);
+                const data = await response.json();
+                displayResults(data, `Brand Name: "${query}"`);
+            } catch (error) {
+                showError('Error performing search: ' + error.message);
+            }
+        }
+
+        // Generic name search
+        async function searchByGeneric() {
+            const query = document.getElementById('genericName').value.trim();
+            const limit = document.getElementById('advancedLimit').value;
+            
+            if (!query) {
+                alert('Please enter a generic name');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/search?query=${encodeURIComponent(query)}&field=openfda.generic_name&limit=${limit}`);
+                const data = await response.json();
+                displayResults(data, `Generic Name: "${query}"`);
+            } catch (error) {
+                showError('Error performing search: ' + error.message);
+            }
+        }
+
+        // Application number search
+        async function searchByApplication() {
+            const query = document.getElementById('appNumber').value.trim();
+            
+            if (!query) {
+                alert('Please enter an application number');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/application/${encodeURIComponent(query)}`);
+                const data = await response.json();
+                displayResults(data, `Application Number: "${query}"`);
+            } catch (error) {
+                showError('Error performing search: ' + error.message);
+            }
+        }
+
+        // Manufacturer search
+        async function searchByManufacturer() {
+            const query = document.getElementById('manufacturer').value.trim();
+            const limit = document.getElementById('advancedLimit').value;
+            
+            if (!query) {
+                alert('Please enter a manufacturer name');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/manufacturer?name=${encodeURIComponent(query)}&limit=${limit}`);
+                const data = await response.json();
+                displayResults(data, `Manufacturer: "${query}"`);
+            } catch (error) {
+                showError('Error performing search: ' + error.message);
+            }
+        }
+
+        // Active ingredient search
+        async function searchByIngredient() {
+            const query = document.getElementById('ingredient').value.trim();
+            const limit = document.getElementById('advancedLimit').value;
+            
+            if (!query) {
+                alert('Please enter an ingredient name');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/active-ingredient?name=${encodeURIComponent(query)}&limit=${limit}`);
+                const data = await response.json();
+                displayResults(data, `Active Ingredient: "${query}"`);
+            } catch (error) {
+                showError('Error performing search: ' + error.message);
+            }
+        }
+
+        // Route of administration search
+        async function searchByRoute() {
+            const query = document.getElementById('route').value.trim().toUpperCase();
+            const limit = document.getElementById('advancedLimit').value;
+            
+            if (!query) {
+                alert('Please enter a route of administration');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/route?route=${encodeURIComponent(query)}&limit=${limit}`);
+                const data = await response.json();
+                displayResults(data, `Route: "${query}"`);
+            } catch (error) {
+                showError('Error performing search: ' + error.message);
+            }
+        }
+
+        // Dosage form search
+        async function searchByDosageForm() {
+            const query = document.getElementById('dosageForm').value.trim();
+            const limit = document.getElementById('advancedLimit').value;
+            
+            if (!query) {
+                alert('Please enter a dosage form');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/dosage-form?form=${encodeURIComponent(query)}&limit=${limit}`);
+                const data = await response.json();
+                displayResults(data, `Dosage Form: "${query}"`);
+            } catch (error) {
+                showError('Error performing search: ' + error.message);
+            }
+        }
+
+        // NDC search
+        async function searchByNDC() {
+            const query = document.getElementById('ndc').value.trim();
+            const limit = document.getElementById('advancedLimit').value;
+            
+            if (!query) {
+                alert('Please enter an NDC');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/ndc?ndc=${encodeURIComponent(query)}&limit=${limit}`);
+                const data = await response.json();
+                displayResults(data, `NDC: "${query}"`);
+            } catch (error) {
+                showError('Error performing search: ' + error.message);
+            }
+        }
+
+        // RxCUI search
+        async function searchByRxCUI() {
+            const query = document.getElementById('rxcui').value.trim();
+            const limit = document.getElementById('advancedLimit').value;
+            
+            if (!query) {
+                alert('Please enter an RxCUI');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/rxcui?rxcui=${encodeURIComponent(query)}&limit=${limit}`);
+                const data = await response.json();
+                displayResults(data, `RxCUI: "${query}"`);
+            } catch (error) {
+                showError('Error performing search: ' + error.message);
+            }
+        }
+
+        // UNII search
+        async function searchByUNII() {
+            const query = document.getElementById('unii').value.trim();
+            const limit = document.getElementById('advancedLimit').value;
+            
+            if (!query) {
+                alert('Please enter a UNII');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/unii?unii=${encodeURIComponent(query)}&limit=${limit}`);
+                const data = await response.json();
+                displayResults(data, `UNII: "${query}"`);
+            } catch (error) {
+                showError('Error performing search: ' + error.message);
+            }
+        }
+
+        // Pharmacologic class search
+        async function searchByPharmClass() {
+            const query = document.getElementById('pharmClass').value.trim();
+            const classType = document.getElementById('pharmClassType').value;
+            const limit = document.getElementById('advancedLimit').value;
+            
+            if (!query) {
+                alert('Please enter a pharmacologic class');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/pharm-class?class_name=${encodeURIComponent(query)}&class_type=${classType}&limit=${limit}`);
+                const data = await response.json();
+                displayResults(data, `Pharmacologic Class (${classType.toUpperCase()}): "${query}"`);
+            } catch (error) {
+                showError('Error performing search: ' + error.message);
+            }
+        }
+
+        // SPL ID search
+        async function searchBySPLId() {
+            const query = document.getElementById('splId').value.trim();
+            const limit = document.getElementById('advancedLimit').value;
+            
+            if (!query) {
+                alert('Please enter an SPL ID');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/spl-id?spl_id=${encodeURIComponent(query)}&limit=${limit}`);
+                const data = await response.json();
+                displayResults(data, `SPL ID: "${query}"`);
+            } catch (error) {
+                showError('Error performing search: ' + error.message);
+            }
+        }
+
+        // Product number search
+        async function searchByProductNumber() {
+            const query = document.getElementById('productNumber').value.trim();
+            const limit = document.getElementById('advancedLimit').value;
+            
+            if (!query) {
+                alert('Please enter a product number');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/product-number?product_number=${encodeURIComponent(query)}&limit=${limit}`);
+                const data = await response.json();
+                displayResults(data, `Product Number: "${query}"`);
+            } catch (error) {
+                showError('Error performing search: ' + error.message);
+            }
+        }
+
+        // Marketing status search
+        async function searchByMarketingStatus() {
+            const query = document.getElementById('marketingStatus').value.trim();
+            const limit = document.getElementById('advancedLimit').value;
+            
+            if (!query) {
+                alert('Please enter a marketing status');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/marketing-status?status=${encodeURIComponent(query)}&limit=${limit}`);
+                const data = await response.json();
+                displayResults(data, `Marketing Status: "${query}"`);
+            } catch (error) {
+                showError('Error performing search: ' + error.message);
+            }
+        }
+
+        // Display results
+        function displayResults(data, searchTitle) {
+            const resultsDiv = document.getElementById('results');
+            const results = data.results || [];
+            
+            if (results.length === 0) {
+                resultsDiv.innerHTML = `
+                    <div class="results-header">
+                        <h2>${searchTitle}</h2>
+                        <p class="results-count">No results found</p>
+                    </div>
+                    <div class="no-results">
+                        <p>No drugs found matching your search criteria.</p>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Try adjusting your search terms or using a different field.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <div class="results-header">
+                    <h2>${searchTitle}</h2>
+                    <p class="results-count">Found ${results.length} result${results.length !== 1 ? 's' : ''}</p>
+                </div>
+            `;
+
+            results.forEach(drug => {
+                const openfda = drug.openfda || {};
+                const products = drug.products || [];
+                
+                const brandNames = openfda.brand_name || ['N/A'];
+                const genericNames = openfda.generic_name || ['N/A'];
+                const manufacturers = openfda.manufacturer_name || ['N/A'];
+                const substances = openfda.substance_name || ['N/A'];
+                const routes = openfda.route || ['N/A'];
+                
+                html += `
+                    <div class="result-item">
+                        <div class="drug-name">${brandNames[0]}</div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Application Number</div>
+                                <div class="info-value">${drug.application_number || 'N/A'}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Generic Name</div>
+                                <div class="info-value">${genericNames.slice(0, 2).join(', ')}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Manufacturer</div>
+                                <div class="info-value">${manufacturers[0]}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Active Ingredients</div>
+                                <div class="info-value">${substances.slice(0, 3).join(', ')}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Route</div>
+                                <div class="info-value">
+                                    ${routes.map(r => `<span class="badge">${r}</span>`).join(' ')}
+                                </div>
+                            </div>
+                `;
+
+                if (products.length > 0) {
+                    const product = products[0];
+                    html += `
+                            <div class="info-item">
+                                <div class="info-label">Dosage Form</div>
+                                <div class="info-value">${product.dosage_form || 'N/A'}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Marketing Status</div>
+                                <div class="info-value">${product.marketing_status || 'N/A'}</div>
+                            </div>
+                    `;
+                }
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            resultsDiv.innerHTML = html;
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function showLoading() {
+            document.getElementById('results').innerHTML = '<div class="loading">Searching FDA database</div>';
+        }
+
+        function showError(message) {
+            document.getElementById('results').innerHTML = `
+                <div class="no-results">
+                    <p style="color: #e74c3c;">❌ ${message}</p>
+                </div>
+            `;
+        }
+
+        // Add enter key support for all input fields
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const button = this.parentElement.querySelector('button');
+                    if (button) button.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
